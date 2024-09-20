@@ -1,12 +1,11 @@
-// cmd/main.go
 package main
 
 import (
 	"encoding/xml"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
-
-	"github.com/gocolly/colly"
 )
 
 func main() {
@@ -31,68 +30,31 @@ type Episode struct {
 }
 
 func visitPodcast(podcastName string) {
-	pod := Podcast{
-		Url:      "https://www.ilpost.it/podcasts/" + podcastName,
-		Episodes: make(map[string]Episode),
-	}
+	url := "https://api-prod.ilpost.it/frontend/podcast/list"
 
-	episodesCollector := colly.NewCollector(
-	// Visit only domain
-	//colly.AllowedDomains("www.ilpost.it"),
-	// Parallelism
-	//colly.Async(true),
-	)
-
-	mediaCollector := colly.NewCollector()
-
-	episodesCollector.OnHTML("h1", func(e *colly.HTMLElement) {
-		log.Println("Found podcast: " + e.Text)
-		pod.Title = e.Text
-	})
-
-	episodesCollector.OnHTML("h3", func(e *colly.HTMLElement) {
-		ep := Episode{
-			Title: e.Text,
-			Url:   e.ChildAttr("a", "href"),
-		}
-		pod.Episodes[ep.Title] = ep
-		log.Println("Found " + ep.Title + " - " + ep.Url)
-
-		err := mediaCollector.Visit(ep.Url)
-		if err != nil {
-			log.Fatal(err)
-		}
-	})
-
-	mediaCollector.OnHTML("main.container", func(e *colly.HTMLElement) {
-		title := e.ChildText("h1")
-		ep := pod.Episodes[title]
-		mp3Url := e.ChildText("div._total-duration_dkzl3_145")
-		ep.Mp3Url = mp3Url
-		log.Println("  Episode " + ep.Title + " url: " + ep.Mp3Url)
-	})
-
-	// Handle errors during scraping
-	episodesCollector.OnError(func(r *colly.Response, err error) {
-		log.Println("Request failed:", r.StatusCode, err)
-	})
-	mediaCollector.OnError(func(r *colly.Response, err error) {
-		log.Println("Request failed:", r.StatusCode, err)
-	})
-
-	// Before making a request print "Visiting ..."
-	episodesCollector.OnRequest(func(r *colly.Request) {
-		log.Println("Visiting", r.URL.String())
-	})
-	mediaCollector.OnRequest(func(r *colly.Request) {
-		log.Println("  Visiting", r.URL.String())
-	})
-
-	// Visit the website
-	err := episodesCollector.Visit(pod.Url)
+	// Make the GET request
+	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("Error:", err)
+		return
 	}
+	defer resp.Body.Close()
+
+	// Check if the status code is 200 OK
+	if resp.StatusCode != http.StatusOK {
+		fmt.Printf("Error: Received status code %d\n", resp.StatusCode)
+		return
+	}
+
+	// Read the response body
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	// Print the response body
+	fmt.Println(string(body))
 }
 
 func getIlpostFeedHandler(w http.ResponseWriter, r *http.Request) {
