@@ -1,4 +1,4 @@
-package main
+package rssfeed
 
 type RSS struct {
 	//XMLName xml.Name `xml:"rss"`

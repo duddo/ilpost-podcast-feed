@@ -2,10 +2,11 @@ package main
 
 import (
 	"encoding/xml"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	rssfeed "ilpost-podcast-feed/pkg/rss_feed"
 )
 
 func main() {
@@ -17,44 +18,32 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
-type Podcast struct {
-	Title    string
-	Url      string
-	Episodes map[string]Episode
-}
-
-type Episode struct {
-	Title  string
-	Url    string
-	Mp3Url string
-}
-
 func visitPodcast(podcastName string) {
 	url := "https://api-prod.ilpost.it/frontend/podcast/list"
 
 	// Make the GET request
 	resp, err := http.Get(url)
 	if err != nil {
-		fmt.Println("Error:", err)
+		log.Println("Error:", err)
 		return
 	}
 	defer resp.Body.Close()
 
 	// Check if the status code is 200 OK
 	if resp.StatusCode != http.StatusOK {
-		fmt.Printf("Error: Received status code %d\n", resp.StatusCode)
+		log.Printf("Error: Received status code %d\n", resp.StatusCode)
 		return
 	}
 
 	// Read the response body
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println("Error:", err)
+		log.Fatal("Error:", err)
 		return
 	}
 
 	// Print the response body
-	fmt.Println(string(body))
+	log.Println(string(body))
 }
 
 func getIlpostFeedHandler(w http.ResponseWriter, r *http.Request) {
@@ -65,7 +54,7 @@ func getIlpostFeedHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create the XML response
-	xmlResponse := RSS{
+	xmlResponse := rssfeed.RSS{
 		Version: "2.0",
 	}
 
