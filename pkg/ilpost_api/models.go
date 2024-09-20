@@ -26,3 +26,7 @@ type Podcast struct {
 type PodcastListResponse struct {
 	Data []Podcast `json:"data"`
 }
+
+type LoggedInResponse struct {
+	Message string `json:message`
+}
