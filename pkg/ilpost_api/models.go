@@ -1,5 +1,7 @@
 package ilpostapi
 
+import "time"
+
 type Podcast struct {
 	Author           string `json:"author"`
 	Chronological    int    `json:"chronological"`
@@ -27,6 +29,80 @@ type PodcastListResponse struct {
 	Data []Podcast `json:"data"`
 }
 
-type LoggedInResponse struct {
-	Message string `json:message`
+// Main struct containing the entire JSON structure
+type PodcastEpisodesResponse struct {
+	Head Head   `json:"head"`
+	Data []Data `json:"data"`
+}
+
+// Head struct contains metadata about the request
+type Head struct {
+	ExecTime float64  `json:"exec_time"`
+	Status   int      `json:"status"`
+	Data     MetaData `json:"data"`
+}
+
+// MetaData struct contains pagination and hit information
+type MetaData struct {
+	Total int `json:"total"`
+	Pg    int `json:"pg"`
+	Hits  int `json:"hits"`
+}
+
+// Data struct represents each episode or podcast
+type Data struct {
+	ID            int       `json:"id"`
+	Author        string    `json:"author"`
+	Title         string    `json:"title"`
+	Click         string    `json:"_click"`
+	Summary       *string   `json:"summary"`
+	ContentHTML   string    `json:"content_html"`
+	Image         string    `json:"image"`
+	ImageWeb      string    `json:"image_web"`
+	Object        string    `json:"object"`
+	Milliseconds  int       `json:"milliseconds"`
+	Minutes       int       `json:"minutes"`
+	Special       int       `json:"special"`
+	ShareURL      string    `json:"share_url"`
+	Slug          string    `json:"slug"`
+	FullSlug      string    `json:"full_slug"`
+	URL           string    `json:"url"`
+	EpisodeRawURL string    `json:"episode_raw_url"`
+	Meta          Meta      `json:"meta"`
+	AccessLevel   string    `json:"access_level"`
+	Timestamp     int64     `json:"timestamp"`
+	Date          time.Time `json:"date"`
+	DateString    *string   `json:"date_string"`
+	Gift          bool      `json:"gift"`
+	Parent        Parent    `json:"parent"`
+	QueueList     *string   `json:"queue_list"`
+}
+
+// Parent struct represents the parent podcast details
+type Parent struct {
+	ID          int    `json:"id"`
+	Author      string `json:"author"`
+	Description string `json:"description"`
+	Title       string `json:"title"`
+	Image       string `json:"image"`
+	ImageWeb    string `json:"image_web"`
+	Object      string `json:"object"`
+	Slug        string `json:"slug"`
+	Meta        Meta   `json:"meta"`
+	AccessLevel string `json:"access_level"`
+}
+
+// Meta struct contains additional metadata
+type Meta struct {
+	Order            int    `json:"order"`
+	BackgroundColor  string `json:"background_color"`
+	Gift             int    `json:"gift,omitempty"`
+	GiftAll          int    `json:"gift_all,omitempty"`
+	PushNotification int    `json:"pushnotification,omitempty"`
+	Chronological    int    `json:"chronological,omitempty"`
+	Robot            string `json:"robot,omitempty"`
+	Sponsored        int    `json:"sponsored,omitempty"`
+	Cyclicality      string `json:"cyclicality,omitempty"`
+	Evidenza         string `json:"evidenza,omitempty"`
+	CyclicalityType  string `json:"cyclicalitytype,omitempty"`
 }
