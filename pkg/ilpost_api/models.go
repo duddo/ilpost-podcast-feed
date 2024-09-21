@@ -49,31 +49,31 @@ type MetaData struct {
 }
 
 type Data struct {
-	ID            int       `json:"id"`
-	Author        string    `json:"author"`
-	Title         string    `json:"title"`
-	Click         string    `json:"_click"`
-	Summary       *string   `json:"summary"`
-	ContentHTML   string    `json:"content_html"`
-	Image         string    `json:"image"`
-	ImageWeb      string    `json:"image_web"`
-	Object        string    `json:"object"`
-	Milliseconds  int       `json:"milliseconds"`
-	Minutes       int       `json:"minutes"`
-	Special       int       `json:"special"`
-	ShareURL      string    `json:"share_url"`
-	Slug          string    `json:"slug"`
-	FullSlug      string    `json:"full_slug"`
-	URL           string    `json:"url"`
-	EpisodeRawURL string    `json:"episode_raw_url"`
-	Meta          Meta      `json:"meta"`
-	AccessLevel   string    `json:"access_level"`
-	Timestamp     int64     `json:"timestamp"`
-	Date          time.Time `json:"date"`
-	DateString    *string   `json:"date_string"`
-	Gift          bool      `json:"gift"`
-	Parent        Parent    `json:"parent"`
-	QueueList     *string   `json:"queue_list"`
+	ID            int     `json:"id"`
+	Author        string  `json:"author"`
+	Title         string  `json:"title"`
+	Click         string  `json:"_click"`
+	Summary       *string `json:"summary"`
+	ContentHTML   string  `json:"content_html"`
+	Image         string  `json:"image"`
+	ImageWeb      string  `json:"image_web"`
+	Object        string  `json:"object"`
+	Milliseconds  int     `json:"milliseconds"`
+	Minutes       int     `json:"minutes"`
+	Special       int     `json:"special"`
+	ShareURL      string  `json:"share_url"`
+	Slug          string  `json:"slug"`
+	FullSlug      string  `json:"full_slug"`
+	URL           string  `json:"url"`
+	EpisodeRawURL string  `json:"episode_raw_url"`
+	//	Meta          Meta      `json:"meta"`
+	AccessLevel string    `json:"access_level"`
+	Timestamp   int64     `json:"timestamp"`
+	Date        time.Time `json:"date"`
+	DateString  *string   `json:"date_string"`
+	Gift        bool      `json:"gift"`
+	Parent      Parent    `json:"parent"`
+	QueueList   *string   `json:"queue_list"`
 }
 
 type Parent struct {
@@ -85,7 +85,7 @@ type Parent struct {
 	ImageWeb    string `json:"image_web"`
 	Object      string `json:"object"`
 	Slug        string `json:"slug"`
-	Meta        Meta   `json:"meta"`
+	//	Meta        Meta   `json:"meta"`
 	AccessLevel string `json:"access_level"`
 }
 
