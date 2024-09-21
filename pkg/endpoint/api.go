@@ -3,14 +3,17 @@ package endpoint
 import (
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"encoding/xml"
 	"fmt"
-	ilpostapi "ilpost-podcast-feed/pkg/ilpost_api"
-	rssfeed "ilpost-podcast-feed/pkg/rss_feed"
+	"io"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
+
+	ilpostapi "ilpost-podcast-feed/pkg/ilpost_api"
 )
 
 func PodcastListHandler(w http.ResponseWriter, r *http.Request) {
@@ -194,10 +197,57 @@ func AreCookieValid(cookies []*http.Cookie) bool {
 	return true
 }
 
-func BuildFeed(episodes ilpostapi.PodcastEpisodesResponse) rssfeed.RSS {
-	feed := rssfeed.RSS{
-		Version: "2.0",
+func BuildFeed(episodes ilpostapi.PodcastEpisodesResponse) RSS {
+	var items []Item
+
+	for _, episode := range episodes.Data {
+		items = append(items, Item{
+			Title:       episode.Title,
+			Link:        episode.URL,
+			PubDate:     episode.Date.Format("Mon, 02 Jan 2006 15:04:05 -0700"),
+			Guid:        fmt.Sprintf("%d", episode.ID),
+			Description: episode.ShareURL,
+			Enclosure: Enclosure{
+				Url:    episode.EpisodeRawURL,
+				Length: "200",
+				Type:   "audio/mpeg",
+			},
+		})
 	}
 
-	return feed
+	return RSS{
+		Version: "2.0",
+		Content: "http://purl.org/rss/1.0/modules/content/",
+		Channel: Channel{
+			Title:       "BOH MAH",
+			Link:        "http...",
+			Description: "descrizione...",
+			Language:    "it",
+			Generator:   "https://github.com/duddo/ilpost-podcast-feed",
+			Items:       items,
+		},
+	}
+}
+
+func TestHandler(w http.ResponseWriter, r *http.Request) {
+	file := Unmarshal("./pkg/endpoint/bordone.json")
+
+	episodes := BuildFeed(file)
+
+	w.Header().Set("Content-Type", "application/xml")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(xml.Header))
+	xml.NewEncoder(w).Encode(episodes)
+}
+
+func Unmarshal(filename string) ilpostapi.PodcastEpisodesResponse {
+	file, _ := os.Open(filename)
+	defer file.Close()
+
+	filedata, _ := io.ReadAll(file)
+
+	var data ilpostapi.PodcastEpisodesResponse
+	json.Unmarshal(filedata, &data)
+
+	return data
 }

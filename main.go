@@ -12,6 +12,7 @@ func main() {
 
 	http.HandleFunc("/podcast-list", endpoint.PodcastListHandler)
 	http.HandleFunc("/feed", endpoint.BasicAuth(&cookieCache, endpoint.FeedHandler))
+	http.HandleFunc("/test", endpoint.TestHandler)
 
 	log.Printf("IlPost Podcast Feed %s", Version)
 
