@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 )
 
 func PodcastListHandler(w http.ResponseWriter, r *http.Request) {
@@ -97,13 +98,13 @@ func FeedHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Retrieve the cookies from the context
-	cookies, ok := r.Context().Value(userKey).(string)
+	cookies, ok := r.Context().Value(userKey).([]*http.Cookie)
 	if !ok {
 		http.Error(w, "User not authenticated", http.StatusInternalServerError)
 		return
 	}
 
-	ilpostapi.FetchPodcastEpisodes(&cookies, "tienimi-bordone", 1, 20)
+	ilpostapi.FetchPodcastEpisodes(cookies, "tienimi-bordone", 1, 20)
 
 	// Create the XML response
 	xmlResponse := rssfeed.RSS{
@@ -124,7 +125,7 @@ type key int
 
 const userKey key = 0
 
-func BasicAuth(next http.HandlerFunc) http.HandlerFunc {
+func BasicAuth(cookieCache *CookieCache, next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Get the value of the "Authorization" header
 		authHeader := r.Header.Get("Authorization")
@@ -151,17 +152,42 @@ func BasicAuth(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		cookies, err := ilpostapi.Login(pair[0], pair[1])
-		if err != nil {
-			w.Header().Set("WWW-Authenticate", `Basic realm="`+err.Error()+`"`)
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
-			return
+		// Try to retrieve valid cookies from cache
+		var username = pair[0]
+		var password = pair[1]
+		var cookies = (*cookieCache)[username]
+		if !AreCookieValid(cookies) {
+			// Ask for actual authorization to ilpost endpoint, otherwise
+			cks, err := ilpostapi.Login(username, password)
+			if err != nil {
+				w.Header().Set("WWW-Authenticate", `Basic realm="`+err.Error()+`"`)
+				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+				return
+			} else {
+				cookies = cks
+				// Store the cookies in cache
+				(*cookieCache)[username] = cookies
+			}
 		}
 
-		// Store the username in the context and pass it to the next handler
+		// Store the username in the context to pass it to the next handler
 		ctx := context.WithValue(r.Context(), userKey, cookies)
 
 		// Pass the request with the context to the next handler
 		next(w, r.WithContext(ctx))
 	}
+}
+
+func AreCookieValid(cookies []*http.Cookie) bool {
+	if cookies == nil {
+		return false
+	}
+
+	for _, cookie := range cookies {
+		if !cookie.Expires.IsZero() && cookie.Expires.Before(time.Now()) {
+			return false
+		}
+	}
+
+	return true
 }

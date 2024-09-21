@@ -8,8 +8,10 @@ import (
 )
 
 func main() {
+	var cookieCache = make(endpoint.CookieCache)
+
 	http.HandleFunc("/podcast-list", endpoint.PodcastListHandler)
-	http.HandleFunc("/feed", endpoint.BasicAuth(endpoint.FeedHandler))
+	http.HandleFunc("/feed", endpoint.BasicAuth(&cookieCache, endpoint.FeedHandler))
 
 	log.Printf("IlPost Podcast Feed %s", Version)
 

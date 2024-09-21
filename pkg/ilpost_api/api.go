@@ -14,7 +14,7 @@ const BaseURL = "https://api-prod.ilpost.it"
 
 const LoginURL = "https://www.ilpost.it/wp-login.php"
 
-func Login(username, password string) (string, error) {
+func Login(username, password string) ([]*http.Cookie, error) {
 	client := &http.Client{}
 
 	// Create the POST payload
@@ -22,7 +22,7 @@ func Login(username, password string) (string, error) {
 	req, err := http.NewRequest("POST", LoginURL, bytes.NewBufferString(payload))
 	if err != nil {
 		log.Println("Error creating request:", err)
-		return "", err
+		return nil, err
 	}
 
 	// Set the Content-Type header
@@ -32,36 +32,25 @@ func Login(username, password string) (string, error) {
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Println("Error making login request:", err)
-		return "", err
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	// Check for errors in the response
 	if resp.StatusCode != http.StatusOK {
 		log.Printf("Login failed with status code %d\n", resp.StatusCode)
-		return "", fmt.Errorf("login failed: %s", resp.Status)
+		return nil, fmt.Errorf("login failed: %s", resp.Status)
 	}
 
-	// Retrieve all cookies and concatenate them
-	var cookieString string
-	cookies := resp.Cookies()
+	var cookies = resp.Cookies()
 	if len(cookies) < 2 {
-		return "", fmt.Errorf("login failed, no cookie returned")
+		return nil, fmt.Errorf("login failed, no cookie returned")
 	}
 
-	for _, cookie := range cookies {
-		cookieString += cookie.String() + "; "
-	}
-
-	// Trim the trailing "; "
-	if len(cookieString) > 2 {
-		cookieString = cookieString[:len(cookieString)-2]
-	}
-
-	return cookieString, nil
+	return resp.Cookies(), nil
 }
 
-func FetchPodcastList(cookieString *string) (PodcastListResponse, error) {
+func FetchPodcastList(cookies []*http.Cookie) (PodcastListResponse, error) {
 	var response PodcastListResponse
 	client := &http.Client{}
 
@@ -73,9 +62,7 @@ func FetchPodcastList(cookieString *string) (PodcastListResponse, error) {
 	}
 
 	// Include the Cookie header
-	if cookieString != nil {
-		req.Header.Set("Cookie", *cookieString)
-	}
+	req.Header.Set("Cookie", GetCookieString(cookies))
 
 	// Make the GET request
 	resp, err := client.Do(req)
@@ -108,7 +95,7 @@ func FetchPodcastList(cookieString *string) (PodcastListResponse, error) {
 	return response, nil
 }
 
-func FetchPodcastEpisodes(cookieString *string, slug string, page int, perPage int) (PodcastEpisodesResponse, error) {
+func FetchPodcastEpisodes(cookies []*http.Cookie, slug string, page int, perPage int) (PodcastEpisodesResponse, error) {
 	var response PodcastEpisodesResponse
 	client := &http.Client{}
 
@@ -121,9 +108,7 @@ func FetchPodcastEpisodes(cookieString *string, slug string, page int, perPage i
 	}
 
 	// Include the Cookie header
-	if cookieString != nil {
-		req.Header.Set("Cookie", *cookieString)
-	}
+	req.Header.Set("Cookie", GetCookieString(cookies))
 
 	// Make the GET request
 	resp, err := client.Do(req)
@@ -150,4 +135,20 @@ func FetchPodcastEpisodes(cookieString *string, slug string, page int, perPage i
 	}
 
 	return response, nil
+}
+
+func GetCookieString(cookies []*http.Cookie) string {
+
+	var cookieString string
+
+	for _, cookie := range cookies {
+		cookieString += cookie.String() + "; "
+	}
+
+	// Trim the trailing "; "
+	if len(cookieString) > 2 {
+		cookieString = cookieString[:len(cookieString)-2]
+	}
+
+	return cookieString
 }
