@@ -103,35 +103,32 @@ func FetchPodcastEpisodes(cookies []*http.Cookie, slug string, page int, perPage
 	url := fmt.Sprintf("%s%s%s?&pg=%v&hits=%v", BaseURL, "/v1/podcast/", slug, page, perPage)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		log.Println("Error creating GET request:", err)
-		return response, err
+		return response, fmt.Errorf("can't create GET request %s: %s", url, err.Error())
 	}
 
 	// Include the Cookie header
-	req.Header.Set("Cookie", GetCookieString(cookies))
+	cookieString := GetCookieString(cookies)
+	req.Header.Set("Cookie", cookieString)
 
 	// Make the GET request
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("Error making GET request:", err)
-		return response, err
+		return response, fmt.Errorf("can't make GET request %s: %s", url, err.Error())
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return response, fmt.Errorf("received status code %s", http.StatusText(resp.StatusCode))
+		return response, fmt.Errorf("received status code %s from %s", http.StatusText(resp.StatusCode), url)
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error reading response body:", err)
-		return response, err
+		return response, fmt.Errorf("can't GET response body from %s: %s", url, err.Error())
 	}
 
 	// Deserialize the JSON response
 	if err := json.Unmarshal(body, &response); err != nil {
-		log.Println("Error decoding JSON:", err)
-		return response, err
+		return response, fmt.Errorf("can't decode JSON of GET request %s: %s", url, err.Error())
 	}
 
 	return response, nil

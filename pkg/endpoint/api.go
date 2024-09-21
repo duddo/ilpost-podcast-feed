@@ -93,23 +93,25 @@ func PodcastListHandler(w http.ResponseWriter, r *http.Request) {
 func FeedHandler(w http.ResponseWriter, r *http.Request) {
 	podcastName := r.URL.Query().Get("podcast-name")
 	if podcastName == "" {
-		http.Error(w, "Missing 'podcast-name' parameter", http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("ERROR %d - Missing 'podcast-name' parameter", http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
 	// Retrieve the cookies from the context
 	cookies, ok := r.Context().Value(userKey).([]*http.Cookie)
 	if !ok {
-		http.Error(w, "User not authenticated", http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("ERROR %d - User not authenticated", http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
-	ilpostapi.FetchPodcastEpisodes(cookies, "tienimi-bordone", 1, 20)
+	episodes, err := ilpostapi.FetchPodcastEpisodes(cookies, podcastName, 1, 20)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("ERROR %d - Failed to retrieve episodes: %s", http.StatusInternalServerError, err.Error()), http.StatusInternalServerError)
+		return
+	}
 
 	// Create the XML response
-	xmlResponse := rssfeed.RSS{
-		Version: "2.0",
-	}
+	xmlResponse := BuildFeed(episodes)
 
 	// Set the content type to XML
 	w.Header().Set("Content-Type", "application/xml")
@@ -117,7 +119,7 @@ func FeedHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Encode the response as XML
 	if err := xml.NewEncoder(w).Encode(xmlResponse); err != nil {
-		http.Error(w, "Failed to encode XML", http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("ERROR %d - Failed to encode XML", http.StatusInternalServerError), http.StatusInternalServerError)
 	}
 }
 
@@ -190,4 +192,12 @@ func AreCookieValid(cookies []*http.Cookie) bool {
 	}
 
 	return true
+}
+
+func BuildFeed(episodes ilpostapi.PodcastEpisodesResponse) rssfeed.RSS {
+	feed := rssfeed.RSS{
+		Version: "2.0",
+	}
+
+	return feed
 }

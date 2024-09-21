@@ -2,6 +2,7 @@ package ilpostapi
 
 import "time"
 
+// === list ===
 type Podcast struct {
 	Author           string `json:"author"`
 	Chronological    int    `json:"chronological"`
@@ -29,27 +30,24 @@ type PodcastListResponse struct {
 	Data []Podcast `json:"data"`
 }
 
-// Main struct containing the entire JSON structure
+// === episodes ===
 type PodcastEpisodesResponse struct {
 	Head Head   `json:"head"`
 	Data []Data `json:"data"`
 }
 
-// Head struct contains metadata about the request
 type Head struct {
 	ExecTime float64  `json:"exec_time"`
 	Status   int      `json:"status"`
 	Data     MetaData `json:"data"`
 }
 
-// MetaData struct contains pagination and hit information
 type MetaData struct {
 	Total int `json:"total"`
 	Pg    int `json:"pg"`
 	Hits  int `json:"hits"`
 }
 
-// Data struct represents each episode or podcast
 type Data struct {
 	ID            int       `json:"id"`
 	Author        string    `json:"author"`
@@ -78,7 +76,6 @@ type Data struct {
 	QueueList     *string   `json:"queue_list"`
 }
 
-// Parent struct represents the parent podcast details
 type Parent struct {
 	ID          int    `json:"id"`
 	Author      string `json:"author"`
@@ -92,7 +89,6 @@ type Parent struct {
 	AccessLevel string `json:"access_level"`
 }
 
-// Meta struct contains additional metadata
 type Meta struct {
 	Order            int    `json:"order"`
 	BackgroundColor  string `json:"background_color"`
