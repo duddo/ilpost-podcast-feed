@@ -1,21 +1,12 @@
 package main
 
 import (
-	"log"
-	"net/http"
-
 	"ilpost-podcast-feed/pkg/endpoint"
+	"log"
 )
 
 func main() {
-	var cookieCache = make(endpoint.CookieCache)
-
-	http.HandleFunc("/podcast-list", endpoint.PodcastListHandler)
-	http.HandleFunc("/feed", endpoint.BasicAuth(&cookieCache, endpoint.FeedHandler))
-	http.HandleFunc("/test", endpoint.TestHandler)
-
 	log.Printf("IlPost Podcast Feed %s", Version)
 
-	log.Println("Server starting on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	endpoint.StartServer()
 }
