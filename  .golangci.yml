@@ -1,0 +1,33 @@
+linters-settings:
+  golint:
+    min-confidence: 0.8   # Sets the confidence level for golint to report issues (0.8 is the default).
+  errcheck:
+    ignore:               # List of error checks to ignore.
+      - fmt.Fprintf       # Example: Ignores unchecked errors for fmt.Fprintf.
+
+linters:
+  enable:
+    - govet              # Enables the govet linter, which checks for potential bugs.
+    - golint             # Enables golint, which checks for style issues.
+    - errcheck           # Enables errcheck, which checks for unchecked errors.
+    - staticcheck        # Enables staticcheck, which performs various advanced static analysis checks.
+  disable:
+    - gocyclo            # Disables gocyclo, which checks for high cyclomatic complexity (complex code paths).
+
+run:
+  timeout: 2m            # Sets a timeout for the linter run. If the linting process takes longer, it will be terminated.
+  issues-exit-code: 1    # Sets the exit code if any issues are found. Useful for CI/CD integration.
+
+issues:
+  exclude-rules:
+ 
+  exclude-use-default: false  # Disables default exclusion rules (if true, default exclusions won't apply).
+
+output:
+  format: colored-line-number  # Sets the output format (other options: line-number, JSON, tab, etc.).
+  color: true                  # Enables colored output in the terminal.
+
+checks:
+  # Define or enable specific checks within linters that support it.
+  unusedparams: true          # Enable the check for unused parameters in functions.
+  shadow: true                # Enable the check for shadowed variables.
