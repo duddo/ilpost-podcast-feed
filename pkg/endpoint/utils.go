@@ -15,7 +15,7 @@ import (
 func StartServer() {
 	var cookieCache = make(CookieCache)
 
-	http.HandleFunc("/podcast-list", podcastListHandler)
+	//http.Handle("/podcast-list", appHandler(podcastListHandler))
 	http.HandleFunc("/feed", basicAuth(&cookieCache, feedHandler))
 	http.Handle("/test", appHandler(testHandler))
 
@@ -70,7 +70,7 @@ func BuildFeed(episodes ilpostapi.PodcastEpisodesResponse) RSS {
 }
 
 func testHandler(w http.ResponseWriter, r *http.Request) *appError {
-	ilpostData, err := unmarshal("./pkg/endpoint/bordone.json")
+	ilpostData, err := unmarshalFromFile("./pkg/endpoint/bordone.json")
 	if err != nil {
 		return &appError{err, "Can't unmarshal test json", http.StatusInternalServerError}
 	}
@@ -92,14 +92,14 @@ func testHandler(w http.ResponseWriter, r *http.Request) *appError {
 	return nil
 }
 
-func unmarshal(filename string) (*ilpostapi.PodcastEpisodesResponse, error) {
+func unmarshalFromFile(filename string) (*ilpostapi.PodcastEpisodesResponse, error) {
 	file, err := os.Open(filename)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
 
-	return nil, fmt.Errorf("brutta storia")
+	// return nil, fmt.Errorf("this is very bad")
 
 	filedata, err := io.ReadAll(file)
 	if err != nil {
@@ -107,7 +107,10 @@ func unmarshal(filename string) (*ilpostapi.PodcastEpisodesResponse, error) {
 	}
 
 	var data ilpostapi.PodcastEpisodesResponse
-	json.Unmarshal(filedata, &data)
+	err = json.Unmarshal(filedata, &data)
+	if err != nil {
+		return nil, err
+	}
 
 	return &data, nil
 }

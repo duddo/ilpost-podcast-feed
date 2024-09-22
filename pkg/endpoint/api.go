@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"encoding/xml"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 
@@ -69,14 +68,11 @@ func basicAuth(cookieCache *CookieCache, next http.HandlerFunc) http.HandlerFunc
 	}
 }
 
-func podcastListHandler(w http.ResponseWriter, r *http.Request) {
+func podcastListHandler(w http.ResponseWriter, _ *http.Request) *appError {
 	response, err := ilpostapi.FetchPodcastList(nil)
 	if err != nil {
-		log.Println("Error fetching podcasts:", err)
-		return
+		return &appError{err, "Can't fetch podcasts", http.StatusInternalServerError}
 	}
-
-	_ = response
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
@@ -143,7 +139,12 @@ func podcastListHandler(w http.ResponseWriter, r *http.Request) {
         </html>
     `, listItems)
 
-	w.Write([]byte(html))
+	_, err = w.Write([]byte(html))
+	if err != nil {
+		return &appError{err, "Can't write response", http.StatusInternalServerError}
+	}
+
+	return nil
 }
 
 func feedHandler(w http.ResponseWriter, r *http.Request) {
