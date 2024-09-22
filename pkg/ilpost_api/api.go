@@ -90,7 +90,7 @@ func FetchPodcastList(cookies []*http.Cookie) (PodcastListResponse, error) {
 func FetchPodcastEpisodes(cookies []*http.Cookie, slug string, page int, perPage int) (PodcastEpisodesResponse, error) {
 	var response PodcastEpisodesResponse
 
-	url := fmt.Sprintf("%s%s%s?&pg=%v&hits=%v", BaseURL, "/v1/podcast/", slug, page, perPage)
+	url := fmt.Sprintf("%s%s%s?&pg=%v&hits=%v", BaseURL, "/podcast/v1/podcast/", slug, page, perPage)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return response, fmt.Errorf("can't create GET request %s: %s", url, err.Error())

@@ -11,6 +11,8 @@ linters:
     - golint             # Enables golint, which checks for style issues.
     - errcheck           # Enables errcheck, which checks for unchecked errors.
     - staticcheck        # Enables staticcheck, which performs various advanced static analysis checks.
+    - gosimple           # Suggests simplifications to your Go code.
+    - goconst            # Detects repeated strings that could be constants.
   disable:
     - gocyclo            # Disables gocyclo, which checks for high cyclomatic complexity (complex code paths).
 
