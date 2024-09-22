@@ -2,10 +2,7 @@ package endpoint
 
 import (
 	"encoding/xml"
-	"net/http"
 )
-
-type CookieCache map[string][]*http.Cookie
 
 // === RSS Podcast feed structures ===
 

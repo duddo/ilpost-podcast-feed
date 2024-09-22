@@ -15,49 +15,46 @@ type key int
 
 const userKey key = 0
 
-func basicAuth(cookieCache *CookieCache, next http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		// Get the value of the "Authorization" header
+func basicAuth(cookieCache *CookieCache, next appHandler) appHandler {
+	return func(w http.ResponseWriter, r *http.Request) *appError {
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
 			w.Header().Set("WWW-Authenticate", `Basic realm="Please enter your username and password"`)
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
-			return
+
+			return &appError{nil, "unauthorized, missing Authorization header", http.StatusUnauthorized}
 		}
 
 		// Check if the header contains "Basic" prefix
 		authHeaderParts := strings.SplitN(authHeader, " ", 2)
 		if len(authHeaderParts) != 2 || authHeaderParts[0] != "Basic" {
 			http.Error(w, "Bad request", http.StatusBadRequest)
-			return
+			return &appError{nil, "missing Basic prefix in header", http.StatusBadRequest}
 		}
 
 		// Decode the base64-encoded username:password
-		payload, _ := base64.StdEncoding.DecodeString(authHeaderParts[1])
-		pair := strings.SplitN(string(payload), ":", 2)
-
-		if len(pair) != 2 {
-			w.Header().Set("WWW-Authenticate", `Basic realm="Please enter your username and password"`)
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
-			return
+		payload, err := base64.StdEncoding.DecodeString(authHeaderParts[1])
+		if err != nil {
+			http.Error(w, "Bad request", http.StatusBadRequest)
+			return &appError{err, "can't decode username:password", http.StatusBadRequest}
 		}
 
-		// Try to retrieve valid cookies from cache
-		var username = pair[0]
-		var password = pair[1]
-		var cookies = (*cookieCache)[username]
-		if !areCookieValid(cookies) {
-			// Ask for actual authorization to ilpost endpoint, otherwise
+		pair := strings.SplitN(string(payload), ":", 2)
+		if len(pair) != 2 {
+			w.Header().Set("WWW-Authenticate", `Basic realm="Enter username and password"`)
+			return &appError{nil, "missing username or password, passed: " + string(payload), http.StatusBadRequest}
+		}
+
+		username := pair[0]
+		password := pair[1]
+		fromChache, cookies := cookieCache.TryGetValidCookie(username)
+		if !fromChache {
 			cks, err := ilpostapi.Login(username, password)
 			if err != nil {
 				w.Header().Set("WWW-Authenticate", `Basic realm="`+err.Error()+`"`)
-				http.Error(w, "Unauthorized", http.StatusUnauthorized)
-				return
-			} else {
-				cookies = cks
-				// Store the cookies in cache
-				(*cookieCache)[username] = cookies
+				return &appError{err, "can't decode username:password", http.StatusBadRequest}
 			}
+			cookies = cks
+			cookieCache.Add(username, cookies)
 		}
 
 		// Store the username in the context to pass it to the next handler
@@ -65,6 +62,8 @@ func basicAuth(cookieCache *CookieCache, next http.HandlerFunc) http.HandlerFunc
 
 		// Pass the request with the context to the next handler
 		next(w, r.WithContext(ctx))
+
+		return next(w, r)
 	}
 }
 
@@ -147,35 +146,37 @@ func podcastListHandler(w http.ResponseWriter, _ *http.Request) *appError {
 	return nil
 }
 
-func feedHandler(w http.ResponseWriter, r *http.Request) {
+func feedHandler(w http.ResponseWriter, r *http.Request) *appError {
 	podcastName := r.URL.Query().Get("podcast-name")
 	if podcastName == "" {
-		http.Error(w, fmt.Sprintf("ERROR %d - Missing 'podcast-name' parameter", http.StatusBadRequest), http.StatusBadRequest)
-		return
+		return &appError{nil, "missing 'podcast-name' parameter", http.StatusBadRequest}
 	}
 
-	// Retrieve the cookies from the context
+	// retrieve cookies from context
 	cookies, ok := r.Context().Value(userKey).([]*http.Cookie)
 	if !ok {
-		http.Error(w, fmt.Sprintf("ERROR %d - User not authenticated", http.StatusInternalServerError), http.StatusInternalServerError)
-		return
+		return &appError{nil, "user not authenticated", http.StatusForbidden}
 	}
 
 	episodes, err := ilpostapi.FetchPodcastEpisodes(cookies, podcastName, 1, 20)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("ERROR %d - Failed to retrieve episodes: %s", http.StatusInternalServerError, err.Error()), http.StatusInternalServerError)
-		return
+		return &appError{err, "failed to retrieve episodes", http.StatusBadGateway}
 	}
 
-	// Create the XML response
+	// create XML response
 	xmlResponse := BuildFeed(episodes)
 
-	// Set the content type to XML
 	w.Header().Set("Content-Type", "application/xml")
 	w.WriteHeader(http.StatusOK)
+	_, err = w.Write([]byte(xml.Header))
+	if err != nil {
+		return &appError{err, "failed to write XML header", http.StatusInternalServerError}
+	}
 
 	// Encode the response as XML
 	if err := xml.NewEncoder(w).Encode(xmlResponse); err != nil {
-		http.Error(w, fmt.Sprintf("ERROR %d - Failed to encode XML", http.StatusInternalServerError), http.StatusInternalServerError)
+		return &appError{err, "failed to encode XML data", http.StatusInternalServerError}
 	}
+
+	return nil
 }

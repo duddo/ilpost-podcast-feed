@@ -9,32 +9,17 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 )
 
 func StartServer() {
 	var cookieCache = make(CookieCache)
 
-	//http.Handle("/podcast-list", appHandler(podcastListHandler))
-	http.HandleFunc("/feed", basicAuth(&cookieCache, feedHandler))
+	http.Handle("/podcast-list", appHandler(podcastListHandler))
+	http.Handle("/feed", basicAuth(&cookieCache, feedHandler))
 	http.Handle("/test", appHandler(testHandler))
 
 	log.Println("Server starting on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
-}
-
-func areCookieValid(cookies []*http.Cookie) bool {
-	if cookies == nil {
-		return false
-	}
-
-	for _, cookie := range cookies {
-		if !cookie.Expires.IsZero() && cookie.Expires.Before(time.Now()) {
-			return false
-		}
-	}
-
-	return true
 }
 
 func BuildFeed(episodes ilpostapi.PodcastEpisodesResponse) RSS {
