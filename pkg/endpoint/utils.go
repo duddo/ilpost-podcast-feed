@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
-	ilpostapi "ilpost-podcast-feed/pkg/ilpost_api"
 	"io"
 	"log"
 	"net/http"
 	"os"
+
+	ilpostapi "ilpost-podcast-feed/pkg/ilpost_api"
 )
 
 func StartServer() {

@@ -60,10 +60,7 @@ func basicAuth(cookieCache *CookieCache, next appHandler) appHandler {
 		// Store the username in the context to pass it to the next handler
 		ctx := context.WithValue(r.Context(), userKey, cookies)
 
-		// Pass the request with the context to the next handler
-		next(w, r.WithContext(ctx))
-
-		return next(w, r)
+		return next(w, r.WithContext(ctx))
 	}
 }
 
