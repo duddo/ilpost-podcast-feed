@@ -1,0 +1,119 @@
+{
+    "head": {
+        "exec_time": 0.059,
+        "status": 200,
+        "data": {
+            "total": 1169,
+            "pg": 1,
+            "hits": 2
+        }
+    },
+    "data": [
+        {
+            "id": 3144580,
+            "author": "Matteo Bordone",
+            "title": "Il secolo scorso",
+            "_click": "episode",
+            "summary": null,
+            "content_html": "",
+            "image": "https://www.ilpost.it/wp-content/uploads/2021/04/app-tb.jpg",
+            "image_web": "https://www.ilpost.it/wp-content/uploads/2023/05/17/1684302197-tienimi_bordone-1-copia.jpg",
+            "object": "episode",
+            "milliseconds": 766000,
+            "minutes": 12,
+            "special": 0,
+            "share_url": "https://www.ilpost.it/episodes/il-secolo-scorso/",
+            "slug": "il-secolo-scorso",
+            "full_slug": "/podcasts/tienimi-bordone/il-secolo-scorso/",
+            "url": "https://www.ilpost.it/podcasts/tienimi-bordone/il-secolo-scorso",
+            "episode_raw_url": "https://www.ilpost.it/wp-content/uploads/2024/09/20/1726834166-10202022-tienimi-bordone-1133-il-secolo-scorso-corretto.mp3",
+            "meta": {
+                "order": 1,
+                "background_color": "#FFFFFF"
+            },
+            "access_level": "subscriber",
+            "timestamp": 1726804828,
+            "date": "2024-09-20T06:00:28+02:00",
+            "date_string": null,
+            "gift": false,
+            "parent": {
+                "id": 227193,
+                "author": "Matteo Bordone",
+                "description": "Il podcast quotidiano di Matteo Bordone. Tutto quello che non sapevi di voler sapere.",
+                "title": "Tienimi Bordone",
+                "image": "https://www.ilpost.it/wp-content/uploads/2021/04/app-tb.jpg",
+                "image_web": "https://www.ilpost.it/wp-content/uploads/2023/05/17/1684302197-tienimi_bordone-1-copia.jpg",
+                "object": "podcast",
+                "slug": "tienimi-bordone",
+                "meta": {
+                    "gift": 1,
+                    "gift_all": 0,
+                    "pushnotification": 1,
+                    "chronological": 1,
+                    "order": 11,
+                    "robot": "off",
+                    "sponsored": 0,
+                    "cyclicality": "da-lunedi-a-venerdi",
+                    "evidenza": "periodico",
+                    "cyclicalitytype": "periodico",
+                    "background_color": "#FFFFFF"
+                },
+                "access_level": "subscriber"
+            },
+            "queue_list": null
+        },
+        {
+            "id": 3143659,
+            "author": "Matteo Bordone",
+            "title": "La settimana della moda TAAAC! (con Arianna Cavallo)",
+            "_click": "episode",
+            "summary": null,
+            "content_html": "",
+            "image": "https://www.ilpost.it/wp-content/uploads/2021/04/app-tb.jpg",
+            "image_web": "https://www.ilpost.it/wp-content/uploads/2023/05/17/1684302197-tienimi_bordone-1-copia.jpg",
+            "object": "episode",
+            "milliseconds": 834000,
+            "minutes": 13,
+            "special": 0,
+            "share_url": "https://www.ilpost.it/episodes/la-settimana-della-moda-taaac-con-arianna-cavallo/",
+            "slug": "la-settimana-della-moda-taaac-con-arianna-cavallo",
+            "full_slug": "/podcasts/tienimi-bordone/la-settimana-della-moda-taaac-con-arianna-cavallo/",
+            "url": "https://www.ilpost.it/podcasts/tienimi-bordone/la-settimana-della-moda-taaac-con-arianna-cavallo",
+            "episode_raw_url": "https://www.ilpost.it/wp-content/uploads/2024/09/18/1726675023-3788812-tienimi-bordone-1132-la-settimana-della-moda-taaac-con-arianna-cavallo.mp3",
+            "meta": {
+                "order": 1,
+                "background_color": "#FFFFFF"
+            },
+            "access_level": "subscriber",
+            "timestamp": 1726718435,
+            "date": "2024-09-19T06:00:35+02:00",
+            "date_string": null,
+            "gift": false,
+            "parent": {
+                "id": 227193,
+                "author": "Matteo Bordone",
+                "description": "Il podcast quotidiano di Matteo Bordone. Tutto quello che non sapevi di voler sapere.",
+                "title": "Tienimi Bordone",
+                "image": "https://www.ilpost.it/wp-content/uploads/2021/04/app-tb.jpg",
+                "image_web": "https://www.ilpost.it/wp-content/uploads/2023/05/17/1684302197-tienimi_bordone-1-copia.jpg",
+                "object": "podcast",
+                "slug": "tienimi-bordone",
+                "meta": {
+                    "gift": 1,
+                    "gift_all": 0,
+                    "pushnotification": 1,
+                    "chronological": 1,
+                    "order": 11,
+                    "robot": "off",
+                    "sponsored": 0,
+                    "cyclicality": "da-lunedi-a-venerdi",
+                    "evidenza": "periodico",
+                    "cyclicalitytype": "periodico",
+                    "background_color": "#FFFFFF"
+                },
+                "access_level": "subscriber"
+            },
+            "queue_list": null
+        }
+    ]
+}
