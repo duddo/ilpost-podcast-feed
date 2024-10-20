@@ -18,6 +18,9 @@ func StartServer() {
 	http.Handle("/feed", basicAuth(&cookieCache, feedHandler))
 	http.Handle("/test", appHandler(testHandler))
 
+	fs := http.FileServer(http.Dir("./static"))
+	http.Handle("/", LoggedHandler(fs))
+
 	log.Println("Server starting on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
