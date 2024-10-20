@@ -161,7 +161,7 @@ func feedHandler(w http.ResponseWriter, r *http.Request) *appError {
 	}
 
 	// create XML response
-	xmlResponse := BuildFeed(episodes)
+	xmlResponse := Convert_ilpost_to_RSS(episodes)
 
 	w.Header().Set("Content-Type", "application/xml")
 	w.WriteHeader(http.StatusOK)
