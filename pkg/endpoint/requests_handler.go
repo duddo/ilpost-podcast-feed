@@ -81,7 +81,7 @@ func (rw *responseWriter) WriteHeader(code int) {
 }
 
 // Logger middleware to log each request and capture errors
-func LoggedHandler(handler http.Handler) http.Handler {
+func loggedHandler(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Wrap the original ResponseWriter
 		rw := &responseWriter{ResponseWriter: w, Code: http.StatusOK} // Default to 200

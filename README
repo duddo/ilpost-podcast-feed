@@ -13,6 +13,7 @@
     * and for overcast
     
 * refactor the /test endpoint
+    * by using the static files?
 * review https://www.castfeedvalidator.com/validate.php?url=https://ilpost-feed.totaro.net/test
 * review https://validator.w3.org/feed/check.cgi?url=https://ilpost-feed.totaro.net/test
 * review https://podba.se/validate/?url=https://ilpost-feed.totaro.net/test 
