@@ -3,8 +3,8 @@ package endpoint
 import (
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"encoding/xml"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -65,77 +65,34 @@ func basicAuth(cookieCache *CookieCache, next appHandler) appHandler {
 }
 
 func podcastListHandler(w http.ResponseWriter, _ *http.Request) *appError {
-	response, err := ilpostapi.FetchPodcastList(nil)
+	ilpostResponse, err := ilpostapi.FetchPodcastList(nil)
 	if err != nil {
 		return &appError{err, "Can't fetch podcasts", http.StatusInternalServerError}
 	}
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	response := Podcasts{
+		Items: []Podcast{},
+	}
 
-	listItems := ""
-	for i, podcast := range response.Data {
+	for i, podcast := range ilpostResponse.Data {
 		if podcast.Title == "" {
 			continue
 		}
 
-		listItems += fmt.Sprintf(`<li>%d - %s <a href="%s">Il Post</a></li> <a href="%s">Feed</a></li>`, i, podcast.Title, podcast.URL, "/feed?podcast-name="+podcast.Slug)
+		p := Podcast{
+			ID:    i,
+			Title: podcast.Title,
+			URL:   podcast.URL,
+			Feed:  "/feed?podcast-name=" + podcast.Slug,
+		}
+
+		response.Items = append(response.Items, p)
 	}
 
-	// HTML response with the list
-	html := fmt.Sprintf(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Hello World</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    background-color: #f0f0f0;
-                    display: flex;
-                    justify-content: center;
-                    height: 100vh;
-                    margin: 0;
-                }
-                .container {
-                    padding: 20px;
-                    background-color: #fff;
-                    border-radius: 8px;
-                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                }
-                h1 {
-                    color: #333;
-                    font-size: 2.5rem;
-                }
-                ul {
-                    list-style-type: none;
-                    padding: 0;
-                }
-                li {
-                    margin: 10px 0;
-                }
-                a {
-                    color: #1e90ff;
-                    text-decoration: none;
-                }
-                a:hover {
-                    text-decoration: underline;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <h1>Hello, World!</h1>
-                <ul>
-                    %s
-                </ul>
-            </div>
-        </body>
-        </html>
-    `, listItems)
+	w.Header().Set("Content-Type", "application/json")
 
-	_, err = w.Write([]byte(html))
+	err = json.NewEncoder(w).Encode(response)
+
 	if err != nil {
 		return &appError{err, "Can't write response", http.StatusInternalServerError}
 	}
