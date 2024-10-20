@@ -92,7 +92,7 @@
             
             const overcastCell = document.createElement('td');
             const overcastLink = document.createElement('a');
-            overcastLink.href = "overcast://x-callback-url/add?url=" + channel.feed;
+            overcastLink.href = "overcast://x-callback-url/add?url=" + new URL(channel.feed, window.location.href).href;
             overcastLink.textContent = "Overcast";
             overcastLink.target = '_blank'; // open in new tab
             overcastCell.appendChild(overcastLink);
