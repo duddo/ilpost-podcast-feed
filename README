@@ -6,9 +6,6 @@
     * website endpoint link
 * scrivi un leggimi
 
-
-* log username
-* log user-agent
 * serve plain-text file
 * write an index.html file 
     * use simplecss
