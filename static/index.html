@@ -1,2 +1,126 @@
 <!DOCTYPE html>
-<h1>Hello world!</h1>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <title>IlPost Podcast Feed</title>
+</head>
+<body>
+  <header>
+    <nav>
+        <a href="/">Home</a>
+        <a href="https://github.com/duddo/ilpost-podcast-feed">GitHub</a>
+        <a href="https://totaro.net">Autore</a>
+    </nav>
+    <h1>IlPost Podcast Feed</h1>
+    <p>Un servizio per ascoltare i podcast de IlPost via RSS</p>
+  </header>
+
+  <main>
+    <p class="notice">
+        <strong>È necessario un abbonamento a <a href="https://www.ilpost.it/">ilpost.it</a>!</strong>
+        <br>
+        Questo servizio non permette l'ascolto gratuito, l'accesso ai podcast rimane vincolato all'autenticazione con la tua utenza. Se non sei abbonato, vai su <a href="https://abbonati.ilpost.it/">ilPost</a> e poi torna qui.
+    </p>
+    <p>
+        IlPost Podcast Feed è un servizio che può fare da tramite tra i podcast de ilPost ed una applicazione per podcast.
+        <br>
+        Ho creato questo servizio perchè trovo i loro podcast de IlPost validi, ma discutibile la scelta di obbligare l'uso di un'app proprietaria per l'ascolto. Questo servizio permette di usare un'app specializzata come <a href="https://www.apple.com/it/apple-podcasts/">Apple Podcast</a> o <a href="https://overcast.fm/">Overcast</a>. Qualunque app può funzionare, perchè l'RSS generato è standard.
+    <p>
+        <br>
+        Se ti mette a disagio inserire la password su un server di terzi, puoi fare self-hosting: <a href="https://github.com/duddo/ilpost-podcast-feed">GitHub</a>
+    </p>
+    <br>
+
+    <table id="podcast-table">
+        <!-- <thead>
+        <tr>
+            <th>Titolo</th>
+            <th>Number</th>
+        </tr>
+        </thead> -->
+        <tbody>        
+        </tbody>
+    </table>
+
+  </main>
+
+  <footer>
+    <p>Creato con ❤️ da Davide Totaro</p>
+  </footer>
+
+  <script>
+    // Funzione per creare e inserire la tabella
+    function populateTable(channels) {
+        const tableBody = document.querySelector('#podcast-table tbody');
+        
+        // Rimuove eventuali righe precedenti
+        tableBody.innerHTML = '';
+
+        // Aggiunge ogni canale alla tabella
+        channels.forEach(channel => {
+            const row = document.createElement('tr');
+
+            // Crea e aggiunge la cella ID
+            // const idCell = document.createElement('td');
+            // idCell.textContent = channel.id;
+            // row.appendChild(idCell);
+
+            const titleCell = document.createElement('td');
+            titleCell.textContent = channel.title;
+            row.appendChild(titleCell);
+
+
+            const urlCell = document.createElement('td');
+            const urlLink = document.createElement('a');
+            urlLink.href = channel.url;
+            urlLink.textContent = "IlPost";
+            urlLink.target = '_blank'; // open in new tab
+            urlCell.appendChild(urlLink);
+            row.appendChild(urlCell);
+
+            
+            const feedCell = document.createElement('td');
+            const feedLink = document.createElement('a');
+            feedLink.href = channel.feed;
+            feedLink.textContent = "RSS";
+            feedLink.target = '_blank'; // open in new tab
+            feedCell.appendChild(feedLink);
+            row.appendChild(feedCell);
+
+            
+            const overcastCell = document.createElement('td');
+            const overcastLink = document.createElement('a');
+            overcastLink.href = "overcast://x-callback-url/add?url=" + channel.feed;
+            overcastLink.textContent = "Overcast";
+            overcastLink.target = '_blank'; // open in new tab
+            overcastCell.appendChild(overcastLink);
+            row.appendChild(overcastCell);
+
+
+            // Aggiunge la riga alla tabella
+            tableBody.appendChild(row);
+        });
+    }
+
+    // Funzione per ottenere la lista dei canali dal server
+    function fetchChannels() {
+        fetch('/podcast-list') // Effettua la richiesta all'endpoint /channels
+            .then(response => response.json())
+            .then(data => {
+                // Popola la tabella con i canali ricevuti
+                populateTable(data.items);
+            })
+            .catch(error => {
+                console.error('Errore durante il caricamento dei canali:', error);
+            });
+    }
+
+    // Quando la pagina è pronta, effettua il fetch dei canali
+    window.onload = function() {
+        fetchChannels();
+    };
+  </script>
+</body>
+</html>
