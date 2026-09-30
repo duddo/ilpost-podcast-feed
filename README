@@ -4,18 +4,9 @@
     * compile instructions
     * instructions for systemd
     * website endpoint link
-* scrivi un leggimi
-
-* serve plain-text file
-* write an index.html file 
-    * use simplecss
-    * add link for itunes
-    * and for overcast
-
-* add my user-agent when getting ilpost api
-    
-* refactor the /test endpoint
-    * by using the static files?
+* add link for itunes on index.html
+* add my user-agent when getting ilpost api so they recognize us
+* refactor the /test endpoint by putting the testdata in go:embed
 * review https://www.castfeedvalidator.com/validate.php?url=https://ilpost-feed.totaro.net/test
 * review https://validator.w3.org/feed/check.cgi?url=https://ilpost-feed.totaro.net/test
 * review https://podba.se/validate/?url=https://ilpost-feed.totaro.net/test 
