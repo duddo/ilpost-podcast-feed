@@ -21,7 +21,7 @@ yourself.
 
 ## Build and run
 
-Requires Go 1.23 or later.
+Requires Go 1.24 or later.
 
     go build
     ./ilpost-podcast-feed
