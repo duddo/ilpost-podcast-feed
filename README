@@ -11,6 +11,8 @@
     * use simplecss
     * add link for itunes
     * and for overcast
+
+* add my user-agent when getting ilpost api
     
 * refactor the /test endpoint
     * by using the static files?
