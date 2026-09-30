@@ -39,8 +39,13 @@ A sample unit is in `packaging/systemd/ilpost.service`:
 # TODO
 * add link for itunes on index.html
 * add my user-agent when getting ilpost api so they recognize us
-* refactor the /test endpoint by putting the testdata in go:embed
-* review https://www.castfeedvalidator.com/validate.php?url=https://ilpost-feed.totaro.net/test
-* review https://validator.w3.org/feed/check.cgi?url=https://ilpost-feed.totaro.net/test
-* review https://podba.se/validate/?url=https://ilpost-feed.totaro.net/test 
+* refactor the /test endpoint by putting the testdata in go:embed bordone.json (and move it to testdata folder)
+* review tester reports
+    * review https://www.castfeedvalidator.com/validate.php?url=https://ilpost-feed.totaro.net/test
+    * review https://validator.w3.org/feed/check.cgi?url=https://ilpost-feed.totaro.net/test
+    * review https://podba.se/validate/?url=https://ilpost-feed.totaro.net/test 
 * unit systemd: doesn't allow comments and may not find binary
+* index cookie cache also by hashed pwd
+* protect CookieCache with mutex
+* update GO version
+* deploy to docker
