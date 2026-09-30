@@ -47,5 +47,4 @@ A sample unit is in `packaging/systemd/ilpost.service`:
 * unit systemd: doesn't allow comments and may not find binary
 * index cookie cache also by hashed pwd
 * protect CookieCache with mutex
-* update GO version
 * deploy to docker

@@ -82,7 +82,7 @@ func podcastListHandler(w http.ResponseWriter, _ *http.Request) *appError {
 		p := Podcast{
 			ID:    i,
 			Title: podcast.Title,
-			URL:   podcast.URL,
+			URL:   podcast.ShareURL,
 			Feed:  "/feed?podcast-name=" + podcast.Slug,
 		}
 
