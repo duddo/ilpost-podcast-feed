@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"net/http"
+	"slices"
 	"strings"
 
 	ilpostapi "ilpost-podcast-feed/pkg/ilpost_api"
@@ -88,6 +89,10 @@ func podcastListHandler(w http.ResponseWriter, _ *http.Request) *appError {
 
 		response.Items = append(response.Items, p)
 	}
+
+	slices.SortStableFunc(response.Items, func(a, b Podcast) int {
+		return strings.Compare(strings.ToLower(a.Title), strings.ToLower(b.Title))
+	})
 
 	w.Header().Set("Content-Type", "application/json")
 
