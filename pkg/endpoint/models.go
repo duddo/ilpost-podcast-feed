@@ -59,3 +59,18 @@ type Enclosure struct {
 	Length string `xml:"length,attr,omitempty"`
 	Type   string `xml:"type,attr"`
 }
+
+// === Json Podcast list structures ===
+
+// Represents the entire JSON response containing a list of channels.
+type Podcasts struct {
+	Items []Podcast `json:"items"`
+}
+
+// Represents a single podcast with its details.
+type Podcast struct {
+	ID    int    `json:"id"`    // The unique identifier for the channel
+	Title string `json:"title"` // The title of the channel
+	URL   string `json:"url"`   // The URL of the channel
+	Feed  string `json:"feed"`  // The feed URL of the channel
+}

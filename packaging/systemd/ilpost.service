@@ -1,0 +1,16 @@
+[Unit]
+Description=ilpost-podcast-feed Go Service
+After=cloudflared.service
+Wants=cloudflared.service
+
+[Service]
+User=root
+WorkingDirectory=~/ilpost-podcast-feed
+ExecStartPre=/bin/bash -c 'cd ~/ilpost-podcast-feed && go build && go install'  # Compile the binary
+ExecStart=ilpost-podcast-feed  # Run the compiled binary
+Restart=always
+RestartSec=3
+#Environment=PORT=8080  # Adjust as needed
+
+[Install]
+WantedBy=multi-user.target
