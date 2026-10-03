@@ -1,0 +1,10 @@
+.git
+.github
+.vscode
+.golangci.yml
+.DS_Store
+packaging
+README.md
+LICENSE
+Dockerfile
+.dockerignore

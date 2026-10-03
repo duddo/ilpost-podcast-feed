@@ -28,6 +28,15 @@ Requires Go 1.24 or later.
 
 It listens on port 8080 and serves `./static`, so run it from the repository root.
 
+## Docker
+
+Images for `linux/amd64` and `linux/arm64` are published to GitHub Container
+Registry on every `v*` tag:
+
+    docker run -d --restart=always -p 8080:8080 ghcr.io/duddo/ilpost-podcast-feed:latest
+
+To build it yourself: `docker build -t ilpost-podcast-feed .`
+
 ## systemd
 
 A sample unit is in `packaging/systemd/ilpost.service`:
@@ -48,3 +57,4 @@ A sample unit is in `packaging/systemd/ilpost.service`:
 * index cookie cache also by hashed pwd
 * protect CookieCache with mutex
 * deploy to docker
+* show version number on the home
