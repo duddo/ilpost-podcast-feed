@@ -21,7 +21,7 @@ func Convert_ilpost_to_RSS(episodes ilpostapi.PodcastEpisodesResponse) RSS {
 				Type:   "audio/mpeg",
 			},
 			ContentEncoded: CDATA(episode.ContentHTML),
-			Duration:       strconv.Itoa(episode.Milliseconds * 1000),
+			Duration:       strconv.Itoa(episode.Milliseconds / 1000),
 			Subtitle:       "",
 			Summary:        "",
 			Keywords:       "",

@@ -49,7 +49,7 @@ func Login(username, password string) ([]*http.Cookie, error) {
 func FetchPodcastList(cookies []*http.Cookie) (PodcastListResponse, error) {
 	var response PodcastListResponse
 
-	req, err := http.NewRequest("GET", BaseURL+"/frontend/podcast/list", nil)
+	req, err := http.NewRequest("GET", BaseURL+"/podcast/v1/podcast?hits=100", nil)
 	if err != nil {
 		log.Println("Error creating GET request:", err)
 		return response, err
